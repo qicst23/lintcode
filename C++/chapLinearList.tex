@@ -29,9 +29,9 @@ Your function should return length = 2, and A is now \code{[1,2]}.
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    int removeDuplicates(int A[], int n) {
+    int removeDuplicates(vector<int> &A) {
+        const int n = A.size();
         if (n == 0) return 0;
-
         int index = 0;
         for (int i = 1; i < n; i++) {
             if (A[index] != A[i])
@@ -49,8 +49,8 @@ public:
 // 使用STL，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    int removeDuplicates(int A[], int n) {
-        return distance(A, unique(A, A + n));
+    int removeDuplicates(vector<int> &A) {
+        return distance(begin(A), unique(begin(A), end(A)));
     }
 };
 \end{Code}
@@ -62,17 +62,17 @@ public:
 // 使用STL，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    int removeDuplicates(int A[], int n) {
-        return removeDuplicates(A, A + n, A) - A;
+    int removeDuplicates(vector<int> &A) {
+        return distance(begin(A),removeDuplicates(begin(A), end(A), begin(A)));
     }
-
+	
     template<typename InIt, typename OutIt>
     OutIt removeDuplicates(InIt first, InIt last, OutIt output) {
         while (first != last) {
             *output++ = *first;
             first = upper_bound(first, last, *first);
         }
-
+		
         return output;
     }
 };
