@@ -101,9 +101,9 @@ target &=& \max\left\{f[j]\right\}, \text{ 其中 }1 \leq j \leq n \nonumber
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    int maxSubArray(int A[], int n) {
+    int maxSubArray(const vector<int> &A) {
         int result = INT_MIN, f = 0;
-        for (int i = 0; i < n; ++i) {
+        for (int i = 0; i < A.size(); ++i) {
             f = max(f + A[i], A[i]);
             result = max(result, f);
         }
@@ -119,14 +119,15 @@ public:
 // 时间复杂度O(n)，空间复杂度O(n)
 class Solution {
 public:
-    int maxSubArray(int A[], int n) {
-        return mcss(A, n);
+    int maxSubArray(const vector<int> &A) {
+        return mcss(A);
     }
 private:
     // 思路5，求最大连续子序列和
-    static int mcss(int A[], int n) {
+    static int mcss(const vector<int> &A) {
         int i, result, cur_min;
-        int *sum = new int[n + 1];  // 前n项和
+        const int n = A.size();
+        vector<int> sum(n + 1, 0);  // 前n项和
 
         sum[0] = 0;
         result = INT_MIN;
@@ -138,7 +139,6 @@ private:
             result = max(result, sum[i] - cur_min);
             cur_min = min(cur_min, sum[i]);
         }
-        delete[] sum;
         return result;
     }
 };

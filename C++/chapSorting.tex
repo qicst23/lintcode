@@ -21,14 +21,23 @@ You may assume that A has enough space to hold additional elements from B. The n
 // 时间复杂度O(m+n)，空间复杂度O(1)
 class Solution {
 public:
-    void merge(int A[], int m, int B[], int n) {
+    vector<int> mergeSortedArray(const vector<int> &A, const vector<int> &B) {
+        const int m = A.size();
+        const int n = B.size();
+        vector<int> result(m + n, 0);
         int ia = m - 1, ib = n - 1, icur = m + n - 1;
         while(ia >= 0 && ib >= 0) {
-            A[icur--] = A[ia] >= B[ib] ? A[ia--] : B[ib--];
+            result[icur--] = A[ia] >= B[ib] ? A[ia--] : B[ib--];
+        }
+
+        while(ia >= 0) {
+            result[icur--] = A[ia--];
         }
         while(ib >= 0) {
-            A[icur--] = B[ib--];
+            result[icur--] = B[ib--];
         }
+
+        return result;
     }
 };
 \end{Code}
@@ -273,16 +282,18 @@ Your algorithm should run in $O(n)$ time and uses constant space.
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    int firstMissingPositive(int A[], int n) {
-        bucket_sort(A, n);
-        
+    int firstMissingPositive(vector<int> &A) {
+        bucket_sort(A);
+
+        const int n = A.size();
         for (int i = 0; i < n; ++i)
             if (A[i] != (i + 1))
                 return i + 1;
         return n + 1;
     }
 private:
-    static void bucket_sort(int A[], int n) {
+    static void bucket_sort(vector<int> &A) {
+        const int n = A.size();
         for (int i = 0; i < n; i++) {
             while (A[i] != i + 1) {
                 if (A[i] <= 0 || A[i] > n || A[i] == A[A[i] - 1])

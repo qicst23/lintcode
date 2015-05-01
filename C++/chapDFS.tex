@@ -483,7 +483,7 @@ private:
         for (int j = 0; j < N; ++j) {  // 扩展状态，一列一列的试
             const bool ok = columns[j] == 0 && main_diag[row + j] == 0 &&
                     anti_diag[row - j + N] == 0;
-            if (！ok) continue;  // 剪枝：如果合法，继续递归
+            if (!ok) continue;  // 剪枝：如果合法，继续递归
             // 执行扩展动作
             C[row] = j;
             columns[j] = main_diag[row + j] = anti_diag[row - j + N] = 1;

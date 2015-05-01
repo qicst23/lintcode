@@ -50,7 +50,7 @@ public:
 class Solution {
 public:
     int removeDuplicates(vector<int> &A) {
-        return distance(begin(A), unique(begin(A), end(A)));
+        return distance(A.begin(), unique(A.begin(), A.end()));
     }
 };
 \end{Code}
@@ -63,7 +63,7 @@ public:
 class Solution {
 public:
     int removeDuplicates(vector<int> &A) {
-        return distance(begin(A),removeDuplicates(begin(A), end(A), begin(A)));
+        return distance(A.begin(),removeDuplicates(A.begin(), A.end(), A.begin()));
     }
 	
     template<typename InIt, typename OutIt>
@@ -110,16 +110,15 @@ Your function should return length = 5, and A is now \code{[1,1,2,2,3]}
 // 时间复杂度O(n)，空间复杂度O(1)
 // @author hex108 (https://github.com/hex108)
 class Solution {
-public:
-    int removeDuplicates(int A[], int n) {
+    public:
+    int removeDuplicates(vector<int> &nums) {
+        const int n = nums.size();
         if (n <= 2) return n;
-
         int index = 2;
         for (int i = 2; i < n; i++){
-            if (A[i] != A[index - 2])
-                A[index++] = A[i];
+            if (nums[i] != nums[index - 2])
+            nums[index++] = nums[i];
         }
-
         return index;
     }
 };
@@ -134,13 +133,14 @@ public:
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    int removeDuplicates(int A[], int n) {
+    int removeDuplicates(vector<int> &nums) {
+        const int n = nums.size();
         int index = 0;
         for (int i = 0; i < n; ++i) {
-            if (i > 0 && i < n - 1 && A[i] == A[i - 1] && A[i] == A[i + 1])
+            if (i > 0 && i < n - 1 && nums[i] == nums[i - 1] && nums[i] == nums[i + 1])
                 continue;
-
-            A[index++] = A[i];
+            
+            nums[index++] = nums[i];
         }
         return index;
     }
@@ -179,8 +179,8 @@ You may assume no duplicate exists in the array.
 // 时间复杂度O(log n)，空间复杂度O(1)
 class Solution {
 public:
-    int search(int A[], int n, int target) {
-        int first = 0, last = n;
+    int search(vector<int> &A, int target) {
+        int first = 0, last = A.size();
         while (first != last) {
             const int mid = first  + (last - first) / 2;
             if (A[mid] == target)
@@ -237,8 +237,8 @@ Write a function to determine if a given target is in the array.
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    bool search(int A[], int n, int target) {
-        int first = 0, last = n;
+    bool search(vector<int> &A, int target) {
+        int first = 0, last = A.size();
         while (first != last) {
             const int mid = first  + (last - first) / 2;
             if (A[mid] == target)
@@ -314,29 +314,37 @@ $O(m+n)$的解法比较直观，直接merge两个数组，然后求第$k$大的�
 // 时间复杂度O(log(m+n))，空间复杂度O(log(m+n))
 class Solution {
 public:
-    double findMedianSortedArrays(int A[], int m, int B[], int n) {
+    double findMedianSortedArrays(const vector<int> &A, const vector<int> &B) {
+        const int m = A.size();
+        const int n = B.size();
         int total = m + n;
         if (total & 0x1)
-            return find_kth(A, m, B, n, total / 2 + 1);
+            return find_kth(A.begin(), A.end(), B.begin(), B.end(), total / 2 + 1);
         else
-            return (find_kth(A, m, B, n, total / 2)
-                    + find_kth(A, m, B, n, total / 2 + 1)) / 2.0;
+            return (find_kth(A.begin(), A.end(), B.begin(), B.end(), total / 2)
+                    + find_kth(A.begin(), A.end(), B.begin(), B.end(), 
+                               total / 2 + 1)) / 2.0;
     }
+
 private:
-    static int find_kth(int A[], int m, int B[], int n, int k) {
+    typedef vector<int>::const_iterator Iter;
+
+    static int find_kth(Iter beginA, Iter endA, Iter beginB, Iter endB, int k) {
         //always assume that m is equal or smaller than n
-        if (m > n) return find_kth(B, n, A, m, k);
-        if (m == 0) return B[k - 1];
-        if (k == 1) return min(A[0], B[0]);
+        const int m = distance(beginA, endA);
+        const int n = distance(beginB, endB);
+        if (m > n) return find_kth(beginB, endB, beginA, endA, k);
+        if (m == 0) return *(beginB + k - 1);
+        if (k == 1) return min(*beginA, *beginB);
 
         //divide k into two parts
         int ia = min(k / 2, m), ib = k - ia;
-        if (A[ia - 1] < B[ib - 1])
-            return find_kth(A + ia, m - ia, B, n, k - ia);
-        else if (A[ia - 1] > B[ib - 1])
-            return find_kth(A, m, B + ib, n - ib, k - ib);
+        if (*(beginA + ia - 1) < *(beginB + ib - 1))
+            return find_kth(beginA + ia, endA, beginB, endB, k - ia);
+        else if (*(beginA + ia - 1) > *(beginB + ib - 1))
+            return find_kth(beginA, endA, beginB + ib, endB, k - ib);
         else
-            return A[ia - 1];
+            return *(beginA + ia - 1);
     }
 };
 \end{Code}
@@ -864,7 +872,8 @@ The order of elements can be changed. It doesn't matter what you leave beyond th
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    int removeElement(int A[], int n, int elem) {
+    int removeElement(vector<int> &A, int elem) {
+        const int n = A.size();
         int index = 0;
         for (int i = 0; i < n; ++i) {
             if (A[i] != elem) {
@@ -883,8 +892,8 @@ public:
 // 使用remove()，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
 public:
-    int removeElement(int A[], int n, int elem) {
-        return distance(A, remove(A, A+n, elem));
+    int removeElement(vector<int> &A, int elem) {
+        return distance(A.begin(), remove(A.begin(), A.end(), elem));
     }
 };
 \end{Code}
@@ -929,39 +938,39 @@ Here are some examples. Inputs are in the left-hand column and its corresponding
 // LintCode, Next Permutation
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
-public:
+    public:
     void nextPermutation(vector<int> &num) {
         next_permutation(num.begin(), num.end());
     }
-
+    
     template<typename BidiIt>
     bool next_permutation(BidiIt first, BidiIt last) {
         // Get a reversed range to simplify reversed traversal.
         const auto rfirst = reverse_iterator<BidiIt>(last);
         const auto rlast = reverse_iterator<BidiIt>(first);
-
+        
         // Begin from the second last element to the first element.
         auto pivot = next(rfirst);
-
+        
         // Find `pivot`, which is the first element that is no less than its
         // successor.  `Prev` is used since `pivort` is a `reversed_iterator`.
         while (pivot != rlast && *pivot >= *prev(pivot))
-            ++pivot;
-
+        ++pivot;
+        
         // No such elemenet found, current sequence is already the largest
         // permutation, then rearrange to the first permutation and return false.
         if (pivot == rlast) {
             reverse(rfirst, rlast);
             return false;
         }
-
+        
         // Scan from right to left, find the first element that is greater than
         // `pivot`.
         auto change = find_if(rfirst, pivot, bind1st(less<int>(), *pivot));
-
+        
         swap(*change, *pivot);
         reverse(rfirst, pivot);
-
+        
         return true;
     }
 };
@@ -1207,27 +1216,24 @@ Given \code{[0,1,0,2,1,0,1,3,2,1,2,1]}, return 6.
 // LintCode, Trapping Rain Water
 // 思路1，时间复杂度O(n)，空间复杂度O(n)
 class Solution {
-public:
-    int trap(int A[], int n) {
-        int *max_left = new int[n]();
-        int *max_right = new int[n]();
-
+    public:
+    int trapRainWater(const vector<int> &heights) {
+        const int n = heights.size();
+        auto max_left = vector<int>(n, 0);
+        auto max_right = vector<int>(n, 0);
+        
         for (int i = 1; i < n; i++) {
-            max_left[i] = max(max_left[i - 1], A[i - 1]);
-            max_right[n - 1 - i] = max(max_right[n - i], A[n - i]);
-
+            max_left[i] = max(max_left[i - 1], heights[i - 1]);
+            max_right[n - 1 - i] = max(max_right[n - i], heights[n - i]);
         }
-
         int sum = 0;
         for (int i = 0; i < n; i++) {
             int height = min(max_left[i], max_right[i]);
-            if (height > A[i]) {
-                sum += height - A[i];
+            if (height > heights[i]) {
+                sum += height - heights[i];
             }
         }
-
-        delete[] max_left;
-        delete[] max_right;
+        
         return sum;
     }
 };
@@ -1239,19 +1245,22 @@ public:
 // LintCode, Trapping Rain Water
 // 思路2，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
-public:
-    int trap(int A[], int n) {
+    public:
+    int trapRainWater(const vector<int> &heights) {
+        const int n = heights.size();
         int max = 0; // 最高的柱子，将数组分为两半
         for (int i = 0; i < n; i++)
-            if (A[i] > A[max]) max = i;
-
+        if (heights[i] > heights[max]) max = i;
+        
         int water = 0;
-        for (int i = 0, peak = 0; i < max; i++)
-            if (A[i] > peak) peak = A[i];
-            else water += peak - A[i];
-        for (int i = n - 1, top = 0; i > max; i--)
-            if (A[i] > top) top = A[i];
-            else water += top - A[i];
+        for (int i = 0, peak = 0; i < max; i++) {
+            if (heights[i] > peak) peak = heights[i];
+            else water += peak - heights[i];
+        }
+        for (int i = n - 1, top = 0; i > max; i--) {
+            if (heights[i] > top) top = heights[i];
+            else water += top - heights[i];
+        }
         return water;
     }
 };
@@ -1266,30 +1275,31 @@ public:
 // 等于当前值的元素全部出栈处理掉，计算面积，最后把当前元素入栈
 // 时间复杂度O(n)，空间复杂度O(n)
 class Solution {
-public:
-    int trap(int a[], int n) {
+    public:
+    int trapRainWater(const vector<int> &heights) {
+        const int n = heights.size();
         stack<pair<int, int>> s;
         int water = 0;
-
+        
         for (int i = 0; i < n; ++i) {
             int height = 0;
-
+            
             while (!s.empty()) { // 将栈里比当前元素矮或等高的元素全部处理掉
                 int bar = s.top().first;
                 int pos = s.top().second;
                 // bar, height, a[i] 三者夹成的凹陷
-                water += (min(bar, a[i]) - height) * (i - pos - 1);
+                water += (min(bar, heights[i]) - height) * (i - pos - 1);
                 height = bar;
-
-                if (a[i] < bar) // 碰到了比当前元素高的，跳出循环
+                
+                if (heights[i] < bar) // 碰到了比当前元素高的，跳出循环
                     break;
                 else
                     s.pop(); // 弹出栈顶，因为该元素处理完了，不再需要了
             }
-
-            s.push(make_pair(a[i], i));
+            
+            s.push(make_pair(heights[i], i));
         }
-
+        
         return water;
     }
 };
@@ -1641,13 +1651,15 @@ $O(m+n)$空间的方法很简单，设置两个bool数组，记录每行和每�
 // LintCode, Set Matrix Zeroes
 // 时间复杂度O(m*n)，空间复杂度O(m+n)
 class Solution {
-public:
+    public:
     void setZeroes(vector<vector<int> > &matrix) {
         const size_t m = matrix.size();
+        if (m == 0) return;
         const size_t n = matrix[0].size();
+        
         vector<bool> row(m, false); // 标记该行是否存在0
         vector<bool> col(n, false); // 标记该列是否存在0
-
+        
         for (size_t i = 0; i < m; ++i) {
             for (size_t j = 0; j < n; ++j) {
                 if (matrix[i][j] == 0) {
@@ -1655,10 +1667,9 @@ public:
                 }
             }
         }
-
         for (size_t i = 0; i < m; ++i) {
             if (row[i])
-                fill(&matrix[i][0], &matrix[i][0] + n, 0);
+            fill(&matrix[i][0], &matrix[i][0] + n, 0);
         }
         for (size_t j = 0; j < n; ++j) {
             if (col[j]) {
@@ -1677,41 +1688,42 @@ public:
 // LintCode, Set Matrix Zeroes
 // 时间复杂度O(m*n)，空间复杂度O(1)
 class Solution {
-public:
+    public:
     void setZeroes(vector<vector<int> > &matrix) {
         const size_t m = matrix.size();
+        if (m == 0) return;
         const size_t n = matrix[0].size();
         bool row_has_zero = false; // 第一行是否存在 0
         bool col_has_zero = false; // 第一列是否存在 0
-
+        
         for (size_t i = 0; i < n; i++)
-            if (matrix[0][i] == 0) {
-                row_has_zero = true;
-                break;
-            }
-
+        if (matrix[0][i] == 0) {
+            row_has_zero = true;
+            break;
+        }
+        
         for (size_t i = 0; i < m; i++)
-            if (matrix[i][0] == 0) {
-                col_has_zero = true;
-                break;
-            }
-
+        if (matrix[i][0] == 0) {
+            col_has_zero = true;
+            break;
+        }
+        
         for (size_t i = 1; i < m; i++)
-            for (size_t j = 1; j < n; j++)
-                if (matrix[i][j] == 0) {
-                    matrix[0][j] = 0;
-                    matrix[i][0] = 0;
-                }
+        for (size_t j = 1; j < n; j++)
+        if (matrix[i][j] == 0) {
+            matrix[0][j] = 0;
+            matrix[i][0] = 0;
+        }
         for (size_t i = 1; i < m; i++)
-            for (size_t j = 1; j < n; j++)
-                if (matrix[i][0] == 0 || matrix[0][j] == 0)
-                    matrix[i][j] = 0;
+        for (size_t j = 1; j < n; j++)
+        if (matrix[i][0] == 0 || matrix[0][j] == 0)
+        matrix[i][j] = 0;
         if (row_has_zero)
-            for (size_t i = 0; i < n; i++)
-                matrix[0][i] = 0;
+        for (size_t i = 0; i < n; i++)
+        matrix[0][i] = 0;
         if (col_has_zero)
-            for (size_t i = 0; i < m; i++)
-                matrix[i][0] = 0;
+        for (size_t i = 0; i < m; i++)
+        matrix[i][0] = 0;
     }
 };
 \end{Code}
@@ -1878,11 +1890,12 @@ Your algorithm should have a linear runtime complexity. Could you implement it w
 // LintCode, Single Number
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
-public:
-    int singleNumber(int A[], int n) {
+    public:
+    int singleNumber(const vector<int> &A) {
         int x = 0;
-        for (size_t i = 0; i < n; ++i)
-            x ^= A[i];
+        for (auto i : A) {
+            x ^= i;
+        }
         return x;
     }
 };
@@ -1894,9 +1907,9 @@ public:
 // LintCode, Single Number
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
-public:
-    int singleNumber(int A[], int n) {
-        return accumulate(A, A + n, 0, bit_xor<int>());
+    public:
+    int singleNumber(const vector<int> &A) {
+        return accumulate(A.begin(), A.end(), 0, bit_xor<int>());
     }
 };
 \end{Code}
@@ -1931,12 +1944,12 @@ Your algorithm should have a linear runtime complexity. Could you implement it w
 // LintCode, Single Number II
 // 方法1，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
-public:
-    int singleNumber(int A[], int n) {
+    public:
+    int singleNumberII(const vector<int> &A) {
         const int W = sizeof(int) * 8; // 一个整数的bit数，即整数字长
         int count[W];  // count[i]表示在在i位出现的1的次数
         fill_n(&count[0], W, 0);
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < A.size(); i++) {
             for (int j = 0; j < W; j++) {
                 count[j] += (A[i] >> j) & 1;
                 count[j] %= 3;
@@ -1957,17 +1970,17 @@ public:
 // LintCode, Single Number II
 // 方法2，时间复杂度O(n)，空间复杂度O(1)
 class Solution {
-public:
-    int singleNumber(int A[], int n) {
+    public:
+    int singleNumberII(const vector<int> &A) {
         int one = 0, two = 0, three = 0;
-        for (int i = 0; i < n; ++i) {
+        for (int i = 0; i < A.size(); ++i) {
             two |= (one & A[i]);
             one ^= A[i];
             three = ~(one & two);
             one &= three;
             two &= three;
         }
-
+        
         return one;
     }
 };
@@ -2046,6 +2059,63 @@ public:
 \myenddot
 
 
+\subsection{Reverse Linked List}
+\label{sec:reverse-linked-list}
+
+
+\subsubsection{描述}
+Reverse a single linked list.
+
+Example:
+Given a linked list
+For linked list \code{1->2->3->nullptr}, return \code{3->2->1->nullptr}.
+
+
+\subsubsection{分析}
+这是一道很基本的单链表题目，考察你对单链表的理解程度。
+
+
+\subsubsection{递归版}
+\begin{Code}
+class Solution {
+    public:
+    ListNode* reverse(ListNode *head) {
+        if (head == nullptr || head->next == nullptr) return head;
+        ListNode* tail = head->next;
+        ListNode *head_of_reversed_tail = reverse(tail);
+        tail->next = head;
+        head->next = nullptr;
+        return head_of_reversed_tail;
+    }
+};
+\end{Code}
+
+
+\subsubsection{迭代版}
+\begin{Code}
+class Solution {
+public:
+    ListNode* reverse(ListNode* head) {
+        ListNode* prev = nullptr;
+        while (head) {
+            ListNode* next = head->next;
+            head->next = prev;
+            prev = head;
+            head = next;
+        }
+        return prev;
+    }
+};
+\end{Code}
+
+
+\subsubsection{相关题目}
+
+\begindot
+\item Reverse Linked List II, 见 \S \ref{sec:reverse-linked-list-ii}
+\myenddot
+
+
 \subsection{Reverse Linked List II}
 \label{sec:reverse-linked-list-ii}
 
@@ -2100,7 +2170,7 @@ public:
 \subsubsection{相关题目}
 
 \begindot
-\item 无
+\item Reverse Linked List, 见 \S \ref{sec:reverse-linked-list}
 \myenddot
 
 
