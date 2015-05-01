@@ -79,7 +79,7 @@ Java 文件夹下是Java版，目前正在编写中，由于拖延症，不知�
 ## 【友情推荐】九章算法
 
 1. 算法辅导在线视频直播课程：<http://www.jiuzhang.com?source=soulmachine>
-1. Leetcode在线答案：<http://www.jiuzhang.com/solution/?source=soulmachine>
+1. Leetcode在线答案：<http://www.jiuzhang.com/solutions/?source=soulmachine>
 1. 新一代刷题网站，比LeetCode题型更多，质量更高 ：<http://www.lintcode.com/?source=soulmachine>
 
 
