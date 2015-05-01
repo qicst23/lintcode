@@ -3,7 +3,7 @@
 ##PDF下载
 <a href="https://github.com/soulmachine/lintcode/raw/master/C%2B%2B/lintcode-cpp.pdf">LintCode题解(C++版).pdf</a>
 
-<font color="red">**本书即将由电子工业出版社出版，因此这个Repo暂时不再更新。朋友们可以去购买纸质版，或者阅读这个稍微旧一点的电子版。**</font>
+<font color="red">**本书即将由电子工业出版社出版，因此这个Repo更新会略落后于纸质版。欢迎大家购买纸质版，鼓励我持续更新本书。**</font>
 
 C++ 文件夹下是C++版，内容一摸一样，代码是用C++写的，
 
