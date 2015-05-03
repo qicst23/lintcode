@@ -939,8 +939,10 @@ Here are some examples. Inputs are in the left-hand column and its corresponding
 // 时间复杂度O(n)，空间复杂度O(1)
 class Solution {
     public:
-    void nextPermutation(vector<int> &num) {
-        next_permutation(num.begin(), num.end());
+    vector<int> nextPermutation(vector<int> &num) {
+        vector<int> nums_copy(num);
+        next_permutation(nums_copy.begin(), nums_copy.end());
+        return nums_copy;
     }
     
     template<typename BidiIt>
